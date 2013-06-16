@@ -4,13 +4,13 @@ using System.Collections;
 public class Hud : MonoBehaviour {
 	
 	// Hud's child objects
-	GameObject chainLength;
+	GameObject scoreCounter;
 
 	// Use this for initialization
 	void Start () {
 		
-		chainLength = transform.FindChild("ChainLength").gameObject;
-		chainLength.guiText.material.color = Color.blue;
+		scoreCounter = transform.FindChild("ScoreCounter").gameObject;
+		scoreCounter.guiText.material.color = Color.blue;
 	}
 	
 	// Update is called once per frame
@@ -19,8 +19,8 @@ public class Hud : MonoBehaviour {
 	}
 	
 	// Called by PlayField.Update 
-	public void SetChainLength (int len)
+	public void SetScore (int score)
 	{
-		chainLength.guiText.text = "Chain Length " + len; 
+		scoreCounter.guiText.text = "Score " + score; 
 	}
 }

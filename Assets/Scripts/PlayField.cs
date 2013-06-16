@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class PlayField : MonoBehaviour {
 	
 	// Hook ups done in editor
-	public Hud hud;
+	public Framework framework;
 	public Dot m_DotPrefab;
 
 	// Configure number of dots and scroll speed
@@ -16,6 +16,7 @@ public class PlayField : MonoBehaviour {
 	// The dots array
 	Dot[,] dots;
 	int dotsDown;
+	//int dotsRecycleY;
 	
 	// Dots position and playfield position
 	float dotSize, dotGap;
@@ -43,7 +44,7 @@ public class PlayField : MonoBehaviour {
 		
 		// Set up the dots across the PlayField
 
-		dotsDown = m_DotsAcross * Screen.currentResolution.width / Screen.currentResolution.height * 2; // Enough room to cover the screen
+		dotsDown = 200;//m_DotsAcross * Screen.currentResolution.width / Screen.currentResolution.height /2;//*2 // Plenty enough room to cover the screen
 		dots = new Dot [m_DotsAcross, dotsDown];
 		dotSize = m_DotScale * m_DotPrefab.transform.localScale.z * 10; // Unity Planes are x10 units
 		dotGap = dotSize / 20;
@@ -66,6 +67,7 @@ public class PlayField : MonoBehaviour {
 				dots[x,y].yPos = y;
 			}
 		}
+		//dotsRecycleY = 0;
 		
 		// Initialise the chain list
 		chain = new List<Dot>();
@@ -75,7 +77,7 @@ public class PlayField : MonoBehaviour {
 	// Update the hud
 	void OnGUI ()
 	{
-		hud.SetChainLength (chain.Count);
+		//hud.SetChainLength (chain.Count);
 	}
 	
 	// Update is called once per frame
@@ -101,7 +103,36 @@ public class PlayField : MonoBehaviour {
 				}
 			}
 #endif
+			/*if (false) //*** If row just went off screen
+			 This puts a new row from the top (will be cleared by deathline at least)
+			 but then need to make the bottom wrap around to the top
+			 or need to move them all up one - painful either way... 
+			{
+				// Recycle dots
+				int y = dotsRecycleY;
+				for (int x = 0; x < m_DotsAcross; x++)
+				{
+					if (dots[x,y].gameObject != null)
+					{
+						Debug.LogError ("Error, this should have been destroyed");
+						DestroyObject (dots[x,y].gameObject);
+					}
+					dots[x,y] = Instantiate (m_DotPrefab, new Vector3 (
+						xOrigin + +x * (dotSize + dotGap),
+						-1, 
+						yOrigin + -y * (dotSize + dotGap)), 
+						Quaternion.identity) as Dot;
+					dots[x,y].transform.localScale *= m_DotScale;
+					dots[x,y].transform.parent = this.transform;
+					dots[x,y].playField = this;
+					dots[x,y].xPos = x;
+					dots[x,y].yPos = y;
+				}
+				if (++dotsRecycleY >= dotsDown)
+					dotsRecycleY = 0;
+			}*/
 			break;
+			
 		case State.CHAINCOMPLETE:
 
 			// Then destroy all the chain
@@ -244,22 +275,26 @@ public class PlayField : MonoBehaviour {
 		{
 			state = State.CHAINCOMPLETE;
 			m_Stamp.Play ();
+			framework.score += chain.Count * 10;
 		}
 	}
 }
 
 /*
- GitHub
+ 
+ recycle for infinite game (potentially)
  
  note using mesh for dots is 100x too many triangles (unless going to distort them cooly)
  note, end of playfield impossible to clear so need to run forever, perhaps speeding up, with a score target
  
- fragments that escape lose lives
+ fragments that escape lose lives/points
  speed increases over time?
  sfx
  HUD
  FE
  icons and whatnot
+ ios warnings
+ proper release builds
  music? (itunes referral?)
  tutorial has bespoke data that stops to tell you what to do like candy crush
  game centre

@@ -24,15 +24,14 @@ public class Dot : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 	
-		red = new Color (.75f, 0, 0, 0);
-		green = new Color (0, .75f, 0, 0);
-		blue = new Color (0, 0, .75f, 0);
-		
 		// Randomise dot colour
 		if (first)	
 		{
 			Random.seed = 0;
 			first = false;
+			red = new Color (.75f, 0, 0, 0);
+			green = new Color (0, .75f, 0, 0);
+			blue = new Color (0, 0, .75f, 0);
 		}
 		int r = Random.Range (0, 3);
 		if (r == 0)
@@ -114,5 +113,10 @@ public class Dot : MonoBehaviour {
 		{
 			texture.renderer.material.color = colour;
 		}
+	}
+	
+	void HitDeathLine ()
+	{
+		DestroyObject (gameObject);
 	}
 }
