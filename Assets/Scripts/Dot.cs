@@ -5,34 +5,36 @@ public class Dot : MonoBehaviour {
 	
 	// Accessable variables not available in editor
 	[HideInInspector]
-	public Color colour;
-	[HideInInspector]
 	public PlayField playField;
 	[HideInInspector]
 	public int xPos, yPos;
 
-	// Size scaler
-	public float m_DotInSquareSize = .75f;
+	// Editor parameters
+	public float m_DotInSquareSize = .75f;	// Size scaler
+	public float m_PowerClearAllColourProbability = 0.1f;
 	
-	GameObject texture;
+	// Private variables
+	GameObject texture;				// Child object (how I'm allowing a smaller dot than the collision box it's in)
+	public enum Power {NONE = 0, CLEARALLCOLOUR};
+	Power power;
+	Color colour = Color.black;				// Note, using this as a flag for unset
+	public static Color red, green, blue;	// Default colours
 	
-	// Default colours
-	static Color red, green, blue;
-	
-	static bool first = true;
 
-	// Use this for initialization
-	void Start () {
+	// Setup the class
+	public static void ClassSetup ()
+	{
+		Random.seed = 0;
+		red = new Color (.75f, 0, 0, 1);
+		green = new Color (0, .75f, 0, 1);
+		blue = new Color (0, 0, .75f, 1);
+		
+	}
 	
+	// Playfield needd to call this as Start() is called too late 
+	public void Setup ()
+	{
 		// Randomise dot colour
-		if (first)	
-		{
-			Random.seed = 0;
-			first = false;
-			red = new Color (.75f, 0, 0, 0);
-			green = new Color (0, .75f, 0, 0);
-			blue = new Color (0, 0, .75f, 0);
-		}
 		int r = Random.Range (0, 3);
 		if (r == 0)
 			colour = red;
@@ -40,10 +42,25 @@ public class Dot : MonoBehaviour {
 			colour = green;
 		else
 			colour = blue;
-		
 		texture = transform.FindChild("Texture").gameObject;
 		texture.renderer.material.color = colour;
-		texture.transform.localScale *= m_DotInSquareSize;
+		
+		float rf = Random.Range (0f,1f);
+		if (rf < m_PowerClearAllColourProbability) {
+			power = Power.CLEARALLCOLOUR;
+			texture.renderer.material.shader = Shader.Find ("Self-Illumin/Diffuse");
+		}
+		else {
+			power = Power.NONE;
+		}
+		
+		// Scaling the child texture to allow small dot in full sized collidable square
+		texture.transform.localScale *= m_DotInSquareSize; 
+	}
+	
+	// Use this for initialization
+	void Start () {
+			
 	}
 	
 	// Update is called once per frame
@@ -103,11 +120,11 @@ public class Dot : MonoBehaviour {
 		if (isHighlighted)
 		{
 			if (colour == red)
-				texture.renderer.material.color = new Color (1, .5f, 0, 0);
+				texture.renderer.material.color = new Color (1, .5f, 0, 1);
 			else if (colour == green)
-				texture.renderer.material.color = new Color (.5f, 1, 0, 0);
+				texture.renderer.material.color = new Color (.5f, 1, 0, 1);
 			else
-				texture.renderer.material.color = new Color (0, .5f, 1, 0);
+				texture.renderer.material.color = new Color (0, .5f, 1, 1);
 		}
 		else
 		{
@@ -115,8 +132,28 @@ public class Dot : MonoBehaviour {
 		}
 	}
 	
-	void HitDeathLine ()
+	// Set the dot's power rather than rely on randomised, used for end of PlayField
+	public void SetPower (Power newPower)
 	{
+		power = newPower;
+		if (power == Power.CLEARALLCOLOUR) {
+			texture.renderer.material.shader = Shader.Find ("Self-Illumin/Diffuse");
+		}
+	}
+	
+	// Set the dot's colour
+	public void SetColour (Color newColour) {
+		colour = newColour;
+		texture.renderer.material.color = colour;
+	}
+	
+	// Set the dot's colour
+	public Color GetColour () {
+		return colour;
+	}
+
+	// Message sent by DeadLine.OnTriggerEnter
+	void HitDeathLine () {
 		DestroyObject (gameObject);
 	}
 }

@@ -39,12 +39,14 @@ public class PlayField : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		
+		Dot.ClassSetup ();
+		
 		// Adjust scale for more or less dots (I set-up with 6)
 		m_DotScale *= 6f/m_DotsAcross;
 		
 		// Set up the dots across the PlayField
 
-		dotsDown = 200;//m_DotsAcross * Screen.currentResolution.width / Screen.currentResolution.height /2;//*2 // Plenty enough room to cover the screen
+		dotsDown = 3;//m_DotsAcross * Screen.currentResolution.width / Screen.currentResolution.height /2;//*2 // Plenty enough room to cover the screen
 		dots = new Dot [m_DotsAcross, dotsDown];
 		dotSize = m_DotScale * m_DotPrefab.transform.localScale.z * 10; // Unity Planes are x10 units
 		dotGap = dotSize / 20;
@@ -65,8 +67,23 @@ public class PlayField : MonoBehaviour {
 				dots[x,y].playField = this;
 				dots[x,y].xPos = x;
 				dots[x,y].yPos = y;
+				dots[x,y].Setup ();
 			}
 		}
+		
+		// Last row needs a CLEARALLCOLOUR in each colour to enable perfect completion
+		int r = Random.Range (0,m_DotsAcross);
+		dots[r,dotsDown - 1].SetPower (Dot.Power.CLEARALLCOLOUR);
+		dots[r,dotsDown - 1].SetColour (Dot.red);
+		int r2;
+		do {r2 = Random.Range (0,m_DotsAcross);} while (r2 == r);
+		dots[r2,dotsDown - 1].SetPower (Dot.Power.CLEARALLCOLOUR);
+		dots[r2,dotsDown - 1].SetColour (Dot.green);
+		int r3;
+		do {r3 = Random.Range (0,m_DotsAcross);} while (r3 == r || r3 == r2);
+		dots[r3,dotsDown - 1].SetPower (Dot.Power.CLEARALLCOLOUR);
+		dots[r3,dotsDown - 1].SetColour (Dot.blue);		
+			
 		//dotsRecycleY = 0;
 		
 		// Initialise the chain list
@@ -211,7 +228,7 @@ public class PlayField : MonoBehaviour {
 		if (state != State.MAKINGCHAIN)
 			return;
 		
-		chainColour = dot.colour;
+		chainColour = dot.GetColour ();
 		chain.Add (dot);
 		dot.SetHighlight (true);
 		m_Click.Play ();
@@ -232,7 +249,7 @@ public class PlayField : MonoBehaviour {
 			return;
 		
 		// If new dot is different colour, reset
-		if (dot.colour != chainColour)
+		if (dot.GetColour() != chainColour)
 		{
 			CompleteChain ();
 			return;
@@ -282,16 +299,17 @@ public class PlayField : MonoBehaviour {
 
 /*
  
- recycle for infinite game (potentially)
+ recycle for infinite game or just have some autowipe out effect at end? special dots that wipe out all colours on screen and have
+ them on the bottom row
  
  note using mesh for dots is 100x too many triangles (unless going to distort them cooly)
- note, end of playfield impossible to clear so need to run forever, perhaps speeding up, with a score target
  
  fragments that escape lose lives/points
  speed increases over time?
+ how animate? need a programmatic animation system easy to use (fire and forget)
  sfx
  HUD
- FE
+ FE - load/save
  icons and whatnot
  ios warnings
  proper release builds
