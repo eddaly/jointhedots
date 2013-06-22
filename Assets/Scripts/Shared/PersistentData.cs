@@ -1,9 +1,20 @@
 using UnityEngine;
 using System.Collections;
 
+/*
+ * INSTRUCTIONS
+ * 
+ * Adding an upgrade or an item:
+ * 
+ * 1. Add an entry to Upgrades or Items enum
+ * 2. Add UnlockLevel, PriceCoins and PriceGoldDiscs properties
+ * 3. Update the UI
+ * 
+*/
+
 public class PersistentData : MonoBehaviour {
 	
-	//************************************************************* Editor parameters
+	//*************************************************************** Editor parameters and defaults
 	
 	// Hard currency price (either Coins or cash)
 	public int m_GoldDiscsPriceCoins = 10000;
@@ -57,7 +68,7 @@ public class PersistentData : MonoBehaviour {
 	// This is a singleton
 	public static PersistentData instance {get; private set;}
 		
-	// The persisent data
+	//*************************************************************** The persisent data
 	static public int hiScore
 	{
 		get {return SecuredPlayerPrefs.GetInt ("hiScore", 0);}
@@ -89,7 +100,7 @@ public class PersistentData : MonoBehaviour {
 		}
 	}
 	
-	//*************************************************************** XP
+	//*************************************************************** XP + Level
 	static public int xP
 	{
 		get {return SecuredPlayerPrefs.GetInt ("xp", 0);}
@@ -126,22 +137,27 @@ public class PersistentData : MonoBehaviour {
 	}
 	
 	//*************************************************************** Upgrades
-	public enum JumpsuitUpgrades
+	public enum Upgrades
 	{
-		NONE = 0,
-		RED,
-		SILVER,
-		GOLD
-	};
-	static public JumpsuitUpgrades jumpsuitUpgrades
+		JUMPSUIT_NONE = 0,
+		JUMPSUIT_RED,
+		JUMPSUIT_SILVER,
+		JUMPSUIT_GOLD
+	};	
+	static public Upgrades upgrades
 	{
-		get {return (JumpsuitUpgrades)SecuredPlayerPrefs.GetInt ("jumpsuitUpgrades", 0);}
+		get {return (Upgrades)SecuredPlayerPrefs.GetInt ("upgrades", 0);}
 		set {
-			SecuredPlayerPrefs.SetInt ("jumpsuitUpgrades", (int)value);
+			SecuredPlayerPrefs.SetInt ("upgrades", (int)value);
 			Save ();	// Save here to ensure not lost if crash
 		}
 	}
 	
+	//*************************************************************** Public API
+	
+	
+	//*************************************************************** Internal methods
+		
 	// Load the SecuredPlayerPrefs
 	void Awake ()
 	{
