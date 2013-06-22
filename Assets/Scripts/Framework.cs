@@ -17,12 +17,17 @@ public class Framework : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
+		if (Input.GetKeyUp (KeyCode.Escape))
+		{
+			Application.LoadLevel (0);
+		}
 	}
 	
 	// Update HUD
 	void OnGUI () {
 	
 		hud.SetScore (score);
+		if (PersistentData.hiScore < score)
+			PersistentData.hiScore = score;
 	}
 }

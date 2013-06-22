@@ -47,9 +47,19 @@
      <Compile Include="Assets\Scripts\DeathLine.cs" />
      <Compile Include="Assets\Scripts\Dot.cs" />
      <Compile Include="Assets\Scripts\Framework.cs" />
+     <Compile Include="Assets\Scripts\Frontend\FE_PersistentData.cs" />
+     <Compile Include="Assets\Scripts\Frontend\Startup.cs" />
      <Compile Include="Assets\Scripts\Hud.cs" />
      <Compile Include="Assets\Scripts\PlayField.cs" />
+     <Compile Include="Assets\Scripts\Shared\PersistentData.cs" />
+     <Compile Include="Assets\SecuredPlayerPrefs\SecuredPlayerPrefs-Example\SecuredPlayerPrefsExample.cs" />
+     <Compile Include="Assets\SecuredPlayerPrefs\SecuredPlayerPrefs-Example\SecuredPlayerPrefsExample2.cs" />
+     <Compile Include="Assets\SecuredPlayerPrefs\SecuredPlayerPrefs-Example\SecuredPlayerPrefsTests.cs" />
+     <None Include="Assets\link.xml" />
      <None Include="Assets\Materials\UnlitAlphaSelfIllum.shader" />
+ <Reference Include="Assets\SecuredPlayerPrefs\Plugins\SecuredPlayerPrefs">
+ <HintPath>Assets\SecuredPlayerPrefs\Plugins\SecuredPlayerPrefs.dll</HintPath>
+ </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

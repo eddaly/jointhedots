@@ -46,7 +46,7 @@ public class PlayField : MonoBehaviour {
 		
 		// Set up the dots across the PlayField
 
-		dotsDown = 3;//m_DotsAcross * Screen.currentResolution.width / Screen.currentResolution.height /2;//*2 // Plenty enough room to cover the screen
+		dotsDown = 200;//m_DotsAcross * Screen.currentResolution.width / Screen.currentResolution.height /2;//*2 // Plenty enough room to cover the screen
 		dots = new Dot [m_DotsAcross, dotsDown];
 		dotSize = m_DotScale * m_DotPrefab.transform.localScale.z * 10; // Unity Planes are x10 units
 		dotGap = dotSize / 20;
